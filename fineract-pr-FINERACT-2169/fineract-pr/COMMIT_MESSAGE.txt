@@ -1,0 +1,28 @@
+FINERACT-2169: Migrate Staff module to typed command infrastructure
+
+Migrates the Staff module write operations (create, update) from the
+legacy JsonCommand / CommandWrapperBuilder pipeline to the new typed
+CommandBus introduced in the fineract-command module.
+
+Changes:
+- Add CreateStaffCommand record with Jakarta Bean Validation annotations
+- Add UpdateStaffCommand record with patch semantics (only non-null
+  fields applied on update)
+- Add CreateStaffCommandHandler (@CommandHandler, @Transactional)
+  with duplicate externalId guard
+- Add UpdateStaffCommandHandler with active-loan guard for deactivation
+- Migrate StaffApiResource POST /staff and PUT /staff/{staffId} to
+  dispatch typed commands via CommandBus
+- Add fineract-command dependency to build.gradle
+- Add unit tests (Mockito, no Spring context) for both handlers
+- Add Testcontainers integration test (MariaDB) covering create,
+  update, validation failure, and duplicate externalId rejection
+
+The legacy StaffWritePlatformServiceJpaRepositoryImpl is retained as
+the delegate and is still called by the new handlers. The legacy
+CommandWrapperBuilder routing in StaffApiResource has been removed.
+
+This brings the total migrated modules to 11 of the target 20 for the
+FINERACT-2169 milestone.
+
+Relates to: FINERACT-2169

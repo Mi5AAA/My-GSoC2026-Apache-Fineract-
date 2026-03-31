@@ -1,0 +1,63 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+// fineract-provider/build.gradle  (excerpt — only the changed block shown)
+//
+// FINERACT-2169: Add fineract-command module dependency for the Staff module migration.
+// All other existing dependencies are unchanged.
+
+dependencies {
+
+    // ── FINERACT-2169: New typed command infrastructure ──────────────────────
+    // Added as part of migrating Staff module to the new CommandBus pattern.
+    // Previously the Staff module used CommandWrapperBuilder + JsonCommand from
+    // fineract-core; this dependency brings in CommandHandler, CommandBus, and
+    // CommandRequest from the new fineract-command module.
+    implementation project(':fineract-command')
+
+    // ── Existing dependencies (unchanged) ────────────────────────────────────
+    implementation project(':fineract-core')
+    implementation project(':fineract-accounting')
+
+    // Spring Boot
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // Jakarta EE APIs
+    implementation 'jakarta.ws.rs:jakarta.ws.rs-api'
+    implementation 'jakarta.validation:jakarta.validation-api'
+
+    // Swagger / OpenAPI
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui'
+
+    // ── Test dependencies ─────────────────────────────────────────────────────
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.mockito:mockito-core'
+
+    // FINERACT-2169: Testcontainers for integration tests of the new command handlers
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:mariadb'
+    testRuntimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+}
